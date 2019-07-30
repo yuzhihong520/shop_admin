@@ -18,7 +18,7 @@
     <el-button type="primary" @click='startlogin'>登录</el-button>
     <el-button @click="resetForm">重置</el-button>
   </el-form-item>
-  <h1>登录页</h1>
+  <!-- <h1>登录页</h1> -->
 </el-form>
 
   </el-col>
@@ -71,6 +71,11 @@
           axios.post('http://localhost:8888/api/private/v1/login',this.loginForm).then(res =>{
             console.log(res);
             if(res.data.meta.status === 200){
+              // 把token保存到本地
+                  // console.log(res.data.data.token);
+                  localStorage.setItem('token',res.data.data.token)
+
+              // 提示
               this.$message({
                 message:'校验正确',
                 type:'success',
