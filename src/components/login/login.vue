@@ -29,7 +29,7 @@
 <script>
 /* eslint-disable */
   // 引入axios
-  import axios from 'axios'
+  // import axios from 'axios'
 // import { url } from 'inspector';
 
   export default {
@@ -55,8 +55,8 @@
     },
     methods: {
       // 开始登录
-      startlogin() {
-        this.$refs.loginForm.validate((valid) => {
+       startlogin() {
+        this.$refs.loginForm.validate(async valid => {
           if (!valid) {
             // return console.log('校验失败');
             this.$message({
@@ -66,11 +66,9 @@
             });
             return;
           }
-          //  console.log('校验成功.开始登录');
-          // axios.post(url,data,config)
-          axios.post('login',this.loginForm).then(res =>{
-            console.log(res);
-            if(res.data.meta.status === 200){
+          let res = await this.$axios.post('login',this.loginForm)
+
+           if(res.data.meta.status === 200){
               // 把token保存到本地
                   // console.log(res.data.data.token);
                   localStorage.setItem('token',res.data.data.token)
@@ -91,7 +89,30 @@
                 duration:800
             });
              }
-          })
+          // .then(res =>{
+          //   console.log(res);
+            // if(res.data.meta.status === 200){
+            //   // 把token保存到本地
+            //       // console.log(res.data.data.token);
+            //       localStorage.setItem('token',res.data.data.token)
+
+            //   // 提示
+            //   this.$message({
+            //     message:'校验正确',
+            //     type:'success',
+            //     duration:800
+            //   });
+            //   // 跳转到home页
+            //     this.$router.push('/home')
+            // }
+            //  else{
+            //    this.$message({
+            //     message:'校验失败',
+            //     type:'error',
+            //     duration:800
+            // });
+            //  }
+          // })
 
         });
       },

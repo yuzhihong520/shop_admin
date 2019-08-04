@@ -32,7 +32,11 @@
         </el-table-column>
         <el-table-column label="操作">
             <template slot-scope='scope'>
-                 <el-button plain size='mini' type="primary" icon="el-icon-edit" ></el-button>
+                 <el-button plain size='mini'
+                  type="primary"
+                   icon="el-icon-edit"
+                   @click='showEditUserDialog(scope.row)'
+                     ></el-button>
                  <el-button @click='delUser(scope.row.id)' plain size='mini' type="danger" icon="el-icon-delete" ></el-button>
                  <el-button plain size='mini' type="success" icon="el-icon-check" >分配角色</el-button>
             </template>
@@ -65,4 +69,24 @@
             <el-button @click='addUser' type="primary">确 定</el-button>
         </div>
     </el-dialog>
+    <!-- 第二个人对话框：编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="dialogEditUserVisible">
+        <el-form :model="editUserForm" label-width='80px'>
+          <el-form-item label="用户名">
+                <el-tag>{{ editUserForm.username }}</el-tag>
+            <!-- <el-input v-model="editUserForm.username" autocomplete="off"></el-input> -->
+          </el-form-item>
+          <el-form-item label="邮箱" >
+            <el-input v-model="editUserForm.email" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" >
+            <el-input v-model="editUserForm.mobile" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogEditUserVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editUser">确 定</el-button>
+        </div>
+      </el-dialog>
+      
 </div>

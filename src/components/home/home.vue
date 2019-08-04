@@ -20,7 +20,7 @@
       <!-- 左侧 -->
       <el-aside width="200px">
         <el-menu
-          :router='true'
+          :router="true"
           :default-active="handleUrlPath()"
           background-color="#545c64"
           text-color="#fff"
@@ -62,32 +62,53 @@
 export default {
   methods: {
     // 退出登录
-    logout () {
-      this.$confirm('此操作将退出登录, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          // 0.退出删除本地的token
-          localStorage.removeItem('token')
-          // 1. 提示退出成功
-          this.$message({
-            message: '退出成功!',
-            type: 'success',
-            duration: 800
-          })
+    async logout () {
+      try {
+        await this.$confirm('此操作将退出登录, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        console.log('点击确定')
+        // 0.退出删除本地的token
+        localStorage.removeItem('token')
+        // 1. 提示退出成功
+        this.$message({
+          message: '退出成功!',
+          type: 'success',
+          duration: 800
+        })
+        // 2.回到login页
+        this.$router.push('/login')
+      } catch (error) {
+        console.log('点击取消')
+        this.$message({
+          message: '取消退出!',
+          type: 'info',
+          duration: 800
+        })
+      }
 
-          // 2.回到login页
-          this.$router.push('/login')
-        })
-        .catch(() => {
-          this.$message({
-            message: '取消退出!',
-            type: 'info',
-            duration: 800
-          })
-        })
+      // .then(() => {
+      // // 0.退出删除本地的token
+      // localStorage.removeItem('token')
+      // // 1. 提示退出成功
+      // this.$message({
+      //   message: '退出成功!',
+      //   type: 'success',
+      //   duration: 800
+      // })
+
+      // // 2.回到login页
+      // this.$router.push('/login')
+      // })
+      // .catch(() => {
+      // this.$message({
+      //   message: '取消退出!',
+      //   type: 'info',
+      //   duration: 800
+      // })
+      // })
     },
     // 处理路径
     handleUrlPath () {
