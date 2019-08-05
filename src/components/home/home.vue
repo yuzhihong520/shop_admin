@@ -27,26 +27,16 @@
           active-text-color="#ffd04b"
         >
           <!-- 用户管理 -->
-          <el-submenu index="1">
+          <el-submenu :index="item1.id+''" v-for='item1 in menusData' :key=item1.id>
             <!-- 自定义标题 -->
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{ item1.authName }}</span>
             </template>
             <!-- 选项 -->
-            <el-menu-item index="/users">用户列表</el-menu-item>
+            <el-menu-item v-for='item2 in item1.children' :key='item2.id' :index=" '/'+ item2.path">{{ item2.authName }}</el-menu-item>
           </el-submenu>
 
-          <!-- 权限管理 -->
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <!-- 选项 -->
-            <el-menu-item index="/roles">角色列表</el-menu-item>
-            <el-menu-item index="/rights">权限列表</el-menu-item>
-          </el-submenu>
         </el-menu>
       </el-aside>
       <!-- 主体 -->
@@ -60,7 +50,21 @@
 
 <script>
 export default {
+  data () {
+    return {
+      menusData: []
+    }
+  },
+  created () {
+    this.loadLeftMenusData()
+  },
   methods: {
+    // 动态加载左侧权限列表
+    async loadLeftMenusData () {
+      let res = await this.$axios.get('menus')
+      console.log(res)
+      this.menusData = res.data.data
+    },
     // 退出登录
     async logout () {
       try {
@@ -112,7 +116,10 @@ export default {
     },
     // 处理路径
     handleUrlPath () {
-      return this.$route.path
+      if (this.$route.path === '/goods-add') {
+        return '/goods'
+      }
+      // return this.$route.path
     }
   }
 }

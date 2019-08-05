@@ -68,11 +68,22 @@ export default {
         email:'',
         mobile:'',
         id:0
-      }
+      },
+      // 是否显示分配对话框
+      dialogAssignRoleVisible:false,
+      // 分配角色对话框
+      assignRoleForm:{
+        username:'小仙女',
+        id:0, //用户名id
+        rid:'', //角色id
+      },
+      // 角色列表数据
+      rolesData:[]
     }
   },
   created () {
     this.getUsersDate()
+    this.loadRolesData()
   },
   methods: {
     //  加载用户列表数据
@@ -91,27 +102,6 @@ export default {
           this.total = res.data.data.total
           // 保存当前页
           this.pagenum = res.data.data.pagenum
-
-      // this.$axios
-      //   .get('users', {
-      //     params: {
-      //       query,
-      //       pagenum,
-      //       pagesize: 2
-      //     }
-      //     // headers: {
-      //     //   Authorization: localStorage.getItem('token')
-      //     // }
-      //   })
-      //   .then(res => {
-      //     console.log(res)
-          // // 保存获取列表数据
-          // this.usersData = res.data.data.users
-          // // 保存total
-          // this.total = res.data.data.total
-          // // 保存当前页
-          // this.pagenum = res.data.data.pagenum
-      //   })
     },
     // 点击分页
     currentPageChange (curPage) {
@@ -143,24 +133,6 @@ export default {
         // 刷新
         this.getUsersDate(1)
       }
-      // this.$axios.post('users', this.addUserForm, {
-        // headers:{
-        //   Authorization:localStorage.getItem('token')
-        // }
-    //   }).then(res => {
-    //     if (res.data.meta.status === 201) {
-    //       // 1.关闭对话框
-    //       this.dialogAddUserVisible = false
-    //       // 2.提示
-    //       this.$message({
-    //         message: '添加用户成功',
-    //         type: 'success',
-    //         duration: 800
-    //       })
-    //       // 刷新
-    //       this.getUsersDate(1)
-    //     }
-    //   })
     },
     // 监听对话框关闭
     dialogClosed () {
@@ -179,22 +151,6 @@ export default {
           // 刷新
           this.getUsersDate()
         }
-      // this.$axios.delete(`users/${id}`, {
-        // // headers:{
-      // //   Authorization:localStorage.getItem('token')
-      // // }
-      // }).then(res => {
-      //   // console.log(res)
-      //   if (res.data.meta.status === 200) {
-      //      this.$message({
-      //       message: '删除成功',
-      //       type: 'success',
-      //       duration: 800
-      //     }),
-      //     // 刷新
-      //     this.getUsersDate()
-      //   }
-      // })
     },
     // 改变状态
     async stateChange (row) {
@@ -207,20 +163,6 @@ export default {
               duration: 800
             })
           }
-      // this.$axios.put(`users/${id}/state/${mg_state}`, null, {
-      // // headers:{
-      // //   Authorization:localStorage.getItem('token')
-      // // }
-      // }).then(res => {
-      //   console.log(res)
-      //   if (res.data.meta.status === 200) {
-      //     this.$message({
-      //       message: '更新状态成功',
-      //       type: 'success',
-      //       duration: 800
-      //     })
-      //   }
-      // })
     },
     // 显示编辑用户对话框
     showEditUserDialog(row){
@@ -250,6 +192,44 @@ export default {
         })
         // 更新
         this.getUsersDate(this.pagenum ,this.input3)
+      }
+    },
+    // 加载所有的角色数据
+    async loadRolesData(){
+         let res = await this.$axios.get('roles')
+        //  console.log(res);
+         this.rolesData = res.data.data
+    },
+    // 展示分配角色对话框
+    async showAssignRoleDialog(row){
+      this.dialogAssignRoleVisible=true
+
+      const { id,username } = row
+      this.assignRoleForm.id = id
+      this.assignRoleForm.username = username
+      let res = await this.$axios.get(`users/${id}`)
+      // console.log(res);
+      this.assignRoleForm.rid = res.data.data.rid ===-1 ? '': res.data.data.rid
+    },
+    // 分配角色
+    async assignRole(){
+      const { id ,rid,username} = this.assignRoleForm
+      // put(url,data,config)
+      let res = await this.$axios.put(`users/${id}/role`,{
+        rid
+      })
+      console.log(res);
+      if(res.data.meta.status===200){
+        // 关闭对话框
+        this.dialogAssignRoleVisible= false
+        // 提示
+        this.$message({
+          message:'设置成功',
+          type:'success',
+          duration:800
+        })
+        // 刷新
+        this.getUsersDate(this.pagenum,this.input3)
       }
     }
   }
